@@ -17,6 +17,7 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _isLoading = true;
   String _searchQuery = '';
   String? _errorMessage;
+  String _searchType = 'nombre'; // 'nombre' o 'id'
 
   @override
   void initState() {
@@ -81,7 +82,12 @@ class _HomeScreenState extends State<HomeScreen> {
     });
 
     try {
-      final productos = await _apiService.buscarProductos(query);
+      List<Producto> productos;
+      if (_searchType == 'id') {
+        productos = await _apiService.buscarProductosPorId(query);
+      } else {
+        productos = await _apiService.buscarProductos(query);
+      }
       setState(() {
         _productosFiltrados = productos;
         _isLoading = false;
@@ -114,8 +120,59 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         child: Column(
           children: [
+            // Selector de tipo de búsqueda
             Container(
-              margin: const EdgeInsets.all(16.0),
+              margin: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.2),
+                    spreadRadius: 2,
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: RadioListTile<String>(
+                      title: const Text('Buscar por nombre'),
+                      value: 'nombre',
+                      groupValue: _searchType,
+                      onChanged: (value) {
+                        setState(() {
+                          _searchType = value!;
+                          _filterProductos(_searchQuery);
+                        });
+                      },
+                      dense: true,
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+                    ),
+                  ),
+                  Expanded(
+                    child: RadioListTile<String>(
+                      title: const Text('Buscar por ID'),
+                      value: 'id',
+                      groupValue: _searchType,
+                      onChanged: (value) {
+                        setState(() {
+                          _searchType = value!;
+                          _filterProductos(_searchQuery);
+                        });
+                      },
+                      dense: true,
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // Campo de búsqueda
+            Container(
+              margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12),
@@ -130,7 +187,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               child: TextField(
                 decoration: InputDecoration(
-                  labelText: 'Buscar productos',
+                  labelText: 'Buscar productos por ${_searchType}',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide.none,

@@ -56,6 +56,24 @@ class ApiService {
     }
   }
 
+  // GET /api/Productos/buscar/id/{id} - Buscar productos por ID
+  Future<List<Producto>> buscarProductosPorId(String id) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/api/Productos/buscar/id/$id'),
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      List<dynamic> jsonList = json.decode(response.body);
+      return jsonList.map((json) => Producto.fromJson(json)).toList();
+    } else {
+      throw Exception('Error al buscar productos por ID');
+    }
+  }
+
   // GET /api/Productos/{id} - Obtener detalles de un producto por ID
   Future<Producto> getProducto(String id) async {
     final response = await http.get(
