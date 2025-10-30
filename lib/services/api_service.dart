@@ -123,4 +123,30 @@ class ApiService {
       throw Exception('Error al crear producto: ${response.statusCode} - ${response.body}');
     }
   }
+
+  // PUT /api/Productos/{id} - Actualizar un producto existente
+  Future<Producto> actualizarProducto(String id, Producto producto) async {
+    final productoData = {
+      'id': id,
+      'nombre': producto.nombre,
+      'precio': producto.precio,
+      'existencia': producto.existencia,
+      'fechaRegistro': producto.fechaRegistro,
+    };
+
+    final response = await http.put(
+      Uri.parse('$baseUrl/api/Productos/$id'),
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: json.encode(productoData),
+    );
+
+    if (response.statusCode == 200) {
+      return Producto.fromJson(json.decode(response.body));
+    } else {
+      throw Exception('Error al actualizar producto: ${response.statusCode} - ${response.body}');
+    }
+  }
 }

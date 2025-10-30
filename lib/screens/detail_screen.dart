@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/producto.dart';
 import '../services/api_service.dart';
+import 'edit_product_screen.dart';
 
 class DetailScreen extends StatefulWidget {
   final Producto producto;
@@ -126,33 +127,74 @@ class _DetailScreenState extends State<DetailScreen> {
                 ),
                 const SizedBox(height: 32),
 
-                // Botón de eliminar
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: _isDeleting ? null : _deleteProducto,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red.shade600,
-                      padding: const EdgeInsets.symmetric(vertical: 18),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      elevation: 2,
-                    ),
-                    child: _isDeleting
-                        ? const CircularProgressIndicator(color: Colors.white)
-                        : Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Icon(Icons.delete, color: Colors.white),
-                              const SizedBox(width: 8),
-                              const Text(
-                                'Eliminar Producto',
-                                style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
-                              ),
-                            ],
+                // Botones de acción
+                Row(
+                  children: [
+                    // Botón Editar
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          final result = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => EditProductScreen(producto: widget.producto),
+                            ),
+                          );
+                          if (result != null) {
+                            // Si se actualizó, regresar con el producto actualizado
+                            Navigator.pop(context, result);
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.orange.shade600,
+                          padding: const EdgeInsets.symmetric(vertical: 18),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                  ),
+                          elevation: 2,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.edit, color: Colors.white),
+                            const SizedBox(width: 8),
+                            const Text(
+                              'Editar',
+                              style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    // Botón Eliminar
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: _isDeleting ? null : _deleteProducto,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red.shade600,
+                          padding: const EdgeInsets.symmetric(vertical: 18),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          elevation: 2,
+                        ),
+                        child: _isDeleting
+                            ? const CircularProgressIndicator(color: Colors.white)
+                            : Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Icon(Icons.delete, color: Colors.white),
+                                  const SizedBox(width: 8),
+                                  const Text(
+                                    'Eliminar',
+                                    style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
+                                  ),
+                                ],
+                              ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
