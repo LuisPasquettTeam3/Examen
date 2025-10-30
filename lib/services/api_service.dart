@@ -56,21 +56,13 @@ class ApiService {
     }
   }
 
-  // GET /api/Productos/buscar/id/{id} - Buscar productos por ID
+  // GET /api/Productos/{id} - Buscar producto por ID (usando el endpoint existente)
   Future<List<Producto>> buscarProductosPorId(String id) async {
-    final response = await http.get(
-      Uri.parse('$baseUrl/api/Productos/buscar/id/$id'),
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-    );
-
-    if (response.statusCode == 200) {
-      List<dynamic> jsonList = json.decode(response.body);
-      return jsonList.map((json) => Producto.fromJson(json)).toList();
-    } else {
-      throw Exception('Error al buscar productos por ID');
+    try {
+      final producto = await getProducto(id);
+      return [producto]; // Retornar como lista con un elemento
+    } catch (e) {
+      throw Exception('Error al buscar producto por ID: $e');
     }
   }
 
@@ -108,13 +100,21 @@ class ApiService {
 
   // POST /api/Productos - Crear un nuevo producto
   Future<Producto> crearProducto(Producto producto) async {
+    // Crear un mapa sin el ID ya que el servidor lo genera
+    final productoData = {
+      'nombre': producto.nombre,
+      'precio': producto.precio,
+      'existencia': producto.existencia,
+      'fechaRegistro': producto.fechaRegistro,
+    };
+
     final response = await http.post(
       Uri.parse('$baseUrl/api/Productos'),
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
       },
-      body: json.encode(producto.toJson()),
+      body: json.encode(productoData),
     );
 
     if (response.statusCode == 200 || response.statusCode == 201) {
