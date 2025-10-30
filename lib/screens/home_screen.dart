@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/producto.dart';
 import '../services/api_service.dart';
 import 'detail_screen.dart';
+import 'add_product_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -109,6 +110,24 @@ class _HomeScreenState extends State<HomeScreen> {
         title: const Text('Productos'),
         backgroundColor: Colors.blue.shade700,
         elevation: 2,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add, color: Colors.white),
+            onPressed: () async {
+              final result = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const AddProductScreen(),
+                ),
+              );
+              if (result != null) {
+                // Recargar la lista si se creó un producto
+                _loadProductos();
+              }
+            },
+            tooltip: 'Agregar producto',
+          ),
+        ],
       ),
       body: Container(
         decoration: BoxDecoration(

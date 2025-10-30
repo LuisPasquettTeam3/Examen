@@ -105,4 +105,22 @@ class ApiService {
       throw Exception('Error al eliminar producto');
     }
   }
+
+  // POST /api/Productos - Crear un nuevo producto
+  Future<Producto> crearProducto(Producto producto) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/api/Productos'),
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: json.encode(producto.toJson()),
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return Producto.fromJson(json.decode(response.body));
+    } else {
+      throw Exception('Error al crear producto: ${response.statusCode} - ${response.body}');
+    }
+  }
 }
