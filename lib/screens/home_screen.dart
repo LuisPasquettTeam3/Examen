@@ -343,13 +343,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                       color: Colors.grey.shade400,
                                       size: 16,
                                     ),
-                                    onTap: () {
-                                      Navigator.push(
+                                    onTap: () async {
+                                      final result = await Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) => DetailScreen(producto: producto),
                                         ),
                                       );
+                                      if (result != null) {
+                                        // Si se editó o eliminó un producto, recargar la lista
+                                        _loadProductos();
+                                      }
                                     },
                                   ),
                                 );
